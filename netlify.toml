@@ -1,0 +1,4 @@
+[build]
+  base = "site/"
+  command = "gatsby build"
+  publish = "site/public"

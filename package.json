@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "workspaces": [
+    "theme",
+    "site"
+  ],
+  "scripts": {
+    "dev": "yarn workspace site develop",
+    "develop": "yarn workspace site develop",
+    "build": "yarn workspace site build",
+    "clean": "yarn workspace site clean",
+    "serve": "yarn workspace site serve"
+  },
+  "devDependencies": {
+    "eslint": "8.3.0",
+    "eslint-config-gatsby-standard": "^3.0.2",
+    "prettier": "^2.5.0",
+    "stylelint": "14.1.0",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-standard": "^24.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.9.0"
+  }
+}
