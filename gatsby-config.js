@@ -1,78 +1,83 @@
+/**
+ * Configure your Gatsby site with this file.
+ *
+ * See: https://www.gatsbyjs.org/docs/gatsby-config/
+ */
+
 module.exports = {
+  /* Your site config here */
   siteMetadata: {
-    title: 'Gatsby Theme Amsterdam',
-    description:
-      'A Gatsby theme for artists, photographers and other creative folks.',
-    url: 'https://amsterdam.netlify.com',
-    author: 'Ryan Wiemer',
-    intro:
-      'A Gatsby theme for artists, photographers and other creative folks.',
-    menuLinks: [
-      {
-        name: 'Gatsby Theme Amsterdam',
-        slug: '/',
-      },
-      {
-        name: 'About',
-        slug: '/about/',
-      },
-      {
-        name: 'Docs',
-        slug: '/docs/',
-      },
-      {
-        name: 'CMS',
-        slug: '/cms/',
-      },
-      {
-        name: 'FAQ',
-        slug: '/faq/',
-      },
-    ],
-    footerLinks: [
-      {
-        name: '@ryanwiemer',
-        url: 'https://twitter.com/ryanwiemer',
-      },
-      {
-        name: 'GitHub',
-        url: 'https://github.com/ryanwiemer/gatsby-theme-amsterdam',
-      },
-    ],
+    title: `Bonneville`,
+    titleTemplate: `%s | A starter theme for Gatsby`,
+    description: `A starter theme for Gatsby`,
+    siteUrl: `https://bonneville.netlify.com`,
+    image: `/images/color.jpg`,
+    author: `Morgan Baker`,
+    authorSite: `https://www.morganbaker.dev`,
+    twitterUsername: `@bonneville`,
+    twitterURL: `https://twitter.com/`,
+    linkedInURL: `https://www.linkedin.com/in/morgan-baker-development/`,
+    githubURL: `https://github.com/bagseye`,
   },
   plugins: [
-    `gatsby-plugin-catch-links`,
+    `gatsby-plugin-netlify`,
+    `gatsby-plugin-styled-components`,
+    `gatsby-plugin-image`,
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Gatsby Theme Amsterdam`,
-        short_name: `Amsterdam`,
-        background_color: `#f5f0eb`,
-        theme_color: `#f5f0eb`,
+        name: `Bonneville - Gatsby Starter Theme`,
+        short_name: `Bonneville`,
         start_url: `/`,
+        background_color: `#0027EC`,
+        theme_color: `#0027EC`,
         display: `standalone`,
-        icon: require.resolve('./src/images/favicon.png'),
+        icon: `static/favicon.ico`,
+      },
+    },
+    `gatsby-plugin-react-helmet`,
+    // `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: "ENTER YOUR GA TRACKING ID HERE",
+        head: false,
+      },
+    },
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 600,
+            },
+          },
+        ],
+      },
+    },
+    `gatsby-plugin-sitemap`,
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `content`,
+        path: `${__dirname}/src/content`,
       },
     },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `documentation`,
-        name: `documentation`,
+        path: `${__dirname}/src/pages`,
       },
     },
     {
-      resolve: 'gatsby-plugin-google-analytics',
+      resolve: `gatsby-source-filesystem`,
       options: {
-        trackingId: process.env.GOOGLE_ANALYTICS || 'UA-XXXXXXXX-X',
-        head: true,
-        pageTransitionDelay: 350,
-      },
-    },
-    {
-      resolve: 'gatsby-theme-amsterdam',
-      options: {
-        postsPerPage: 6,
+        name: `contentImages`,
+        path: `${__dirname}/src/content/images`,
       },
     },
   ],
