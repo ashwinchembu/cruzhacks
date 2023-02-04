@@ -1,54 +1,77 @@
 import React from "react"
 import Layout from "../components/Layout"
+import createDOMPurify from 'dompurify'
+import { JSDOM } from 'jsdom'
+
+const window = (new JSDOM('')).window
+const DOMPurify = createDOMPurify(window)
+
+
+const rawHTML = `
+<div>Teachable Machine Image Model</div>
+<button type="button" onclick="init()">Start</button>
+<div id="webcam-container"></div>
+<div id="label-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+<script type="text/javascript">
+    // More API functions here:
+    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+    // the link to your model provided by Teachable Machine export panel
+    const URL = "./my_model/";
+    let model, webcam, labelContainer, maxPredictions;
+    // Load the image model and setup the webcam
+    async function init() {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+        // load the model and metadata
+        // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+        // or files from your local hard drive
+        // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+        // Convenience function to setup a webcam
+        const flip = true; // whether to flip the webcam
+        webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+        await webcam.setup(); // request access to the webcam
+        await webcam.play();
+        window.requestAnimationFrame(loop);
+        // append elements to the DOM
+        document.getElementById("webcam-container").appendChild(webcam.canvas);
+        labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < maxPredictions; i++) { // and class labels
+            labelContainer.appendChild(document.createElement("div"));
+        }
+    }
+    async function loop() {
+        webcam.update(); // update the webcam frame
+        await predict();
+        window.requestAnimationFrame(loop);
+    }
+    // run the webcam image through the image model
+    async function predict() {
+        // predict can take in an image, video or canvas html element
+        const prediction = await model.predict(webcam.canvas);
+        for (let i = 0; i < maxPredictions; i++) {
+            const classPrediction =
+                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            labelContainer.childNodes[i].innerHTML = classPrediction;
+        }
+    }
+</script>
+`
 
 const AboutPage = () => (
   <>
     <Layout>
       <h1>What is Bonneville?</h1>
-      <p>
-        Bonneville is a GatsbyJS theme developed & maintained by{" "}
-        <a href="https://www.morganbaker.dev" target="_blank" rel="noreferrer">
-          Morgan Baker
-        </a>
-        . Built using ReactJS architecture, it benefits from an app-like
-        experience with easy to maintain components. If you use Bonneville as
-        the base of your next project you will find expanding its struture
-        simple to extend.
-      </p>
-      <h3>Getting Started</h3>
-      <p>
-        If you're new to web development or GatsbyJS the best place for you to
-        start is with their{" "}
-        <a
-          href="https://www.gatsbyjs.com/docs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          excellent documentation
-        </a>
-        . Here you will find well-written guides for absolute beginners to
-        Javascript experts.
-      </p>
-      <h2>Mauris nec pulvinar est</h2>
-      <p>
-        Quisque et aliquam magna. Pellentesque suscipit odio condimentum,
-        faucibus ante et, fringilla ipsum. In scelerisque laoreet lorem, non
-        eleifend ex eleifend vitae. Phasellus fermentum placerat turpis, eget
-        aliquet turpis auctor in.
-      </p>
-      <p>
-        Nulla facilisi. Fusce id elit ac eros fringilla semper. Suspendisse sed
-        placerat metus, sit amet rhoncus lectus. Morbi ultrices auctor mauris,
-        nec volutpat lacus tristique interdum.
-      </p>
-      <h2>Quisque et aliquam magna</h2>
-      <p>
-        Curabitur egestas felis sed scelerisque facilisis. Nunc id semper nisi.
-        Vivamus suscipit, ex at efficitur sodales, diam elit lacinia sapien, eu
-        interdum velit magna quis urna. Sed accumsan viverra augue id imperdiet.{" "}
-      </p>
-    </Layout>
+    <div>
+    { <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(rawHTML) }} /> }
+  </div>
+  </Layout>
+  
   </>
+  
 )
 
 export default AboutPage
